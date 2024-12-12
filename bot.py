@@ -1,27 +1,44 @@
-from telegram import Update
-from telegram.ext import Application, CommandHandler
 import logging
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+import signal
+import sys
 
-# Set up logging
+# Enable logging to track any issues
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Command handler function
-async def start(update: Update, context):
-    await update.message.reply_text('Hello, this is your bot!')
+# Define your start command
+def start(update, context):
+    update.message.reply_text("Hello! I'm your bot.")
 
-# Main function to run the bot
+# Define your main function
 def main():
-    """Start the bot."""
-    application = Application.builder().token('7981527875:AAEMoKR68iYkQzE2Ga9YYU3CZ08orBYy_xI').build()
+    # Replace with your bot's token
+    token = '7981527875:AAEMoKR68iYkQzE2Ga9YYU3CZ08orBYy_xI'
 
-    # Command handler for "/start"
-    start_handler = CommandHandler("start", start)
-    application.add_handler(start_handler)
+    # Create Updater object and pass your bot's token
+    updater = Updater(token, use_context=True)
 
-    # Start polling
-    application.run_polling()
+    # Add handlers (e.g., command handler)
+    dp = updater.dispatcher
+    dp.add_handler(CommandHandler("start", start))
+
+    # Start polling for updates
+    updater.start_polling()
+    logger.info("Bot is polling...")
+
+    # Block until you receive a signal to stop
+    updater.idle()
+
+# Function to handle graceful shutdown
+def shutdown(signum, frame):
+    logger.info("Shutting down gracefully...")
+    sys.exit(0)
+
+# Register signal handlers for graceful shutdown
+signal.signal(signal.SIGINT, shutdown)
+signal.signal(signal.SIGTERM, shutdown)
 
 if __name__ == '__main__':
     main()
