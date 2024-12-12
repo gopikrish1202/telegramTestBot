@@ -2,6 +2,10 @@ import logging
 import os
 from telegram import Update
 from telegram.ext import Application, CommandHandler, CallbackContext
+from dotenv import load_dotenv
+
+# Load environment variables from the .env file
+load_dotenv()
 
 # Set up logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -9,8 +13,8 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 # Get your bot token and webhook URL from environment variables
-TOKEN = os.getenv("7981527875:AAEMoKR68iYkQzE2Ga9YYU3CZ08orBYy_xI")  # Make sure the environment variable is named "BOT_TOKEN"
-WEBHOOK_URL = os.getenv("https://telegramtestbot-ruqb.onrender.com")  # Ensure you have the correct webhook URL in your environment
+TOKEN = os.getenv("7981527875:AAEMoKR68iYkQzE2Ga9YYU3CZ08orBYy_xI")  # Now fetches the BOT_TOKEN from the environment
+WEBHOOK_URL = os.getenv("https://telegramtestbot-ruqb.onrender.com")  # Fetches the WEBHOOK_URL from the environment
 
 # Define a basic command handler (for example, `/start`)
 async def start(update: Update, context: CallbackContext) -> None:
