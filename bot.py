@@ -1,44 +1,35 @@
 import logging
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-import signal
-import sys
+import os
+from telegram import Update
+from telegram.ext import Application, CommandHandler, CallbackContext
 
-# Enable logging to track any issues
+# Set up logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Define your start command
-def start(update, context):
-    update.message.reply_text("Hello! I'm your bot.")
+# Your bot token and webhook URL
+TOKEN = os.getenv("7981527875:AAEMoKR68iYkQzE2Ga9YYU3CZ08orBYy_xI")
+WEBHOOK_URL = os.getenv("https://telegramtestbot-ruqb.onrender.com")
 
-# Define your main function
-def main():
-    # Replace with your bot's token
-    token = '7981527875:AAEMoKR68iYkQzE2Ga9YYU3CZ08orBYy_xI'
+# Define a basic command handler (for example, `/start`)
+async def start(update: Update, context: CallbackContext) -> None:
+    await update.message.reply_text('Hello, I am your bot!')
 
-    # Create Updater object and pass your bot's token
-    updater = Updater(token, use_context=True)
+# Create the application and add handlers
+async def main() -> None:
+    application = Application.builder().token(TOKEN).build()
 
-    # Add handlers (e.g., command handler)
-    dp = updater.dispatcher
-    dp.add_handler(CommandHandler("start", start))
+    # Add a command handler (example `/start`)
+    application.add_handler(CommandHandler("start", start))
 
-    # Start polling for updates
-    updater.start_polling()
-    logger.info("Bot is polling...")
+    # Set up the webhook
+    await application.bot.set_webhook(WEBHOOK_URL)
 
-    # Block until you receive a signal to stop
-    updater.idle()
-
-# Function to handle graceful shutdown
-def shutdown(signum, frame):
-    logger.info("Shutting down gracefully...")
-    sys.exit(0)
-
-# Register signal handlers for graceful shutdown
-signal.signal(signal.SIGINT, shutdown)
-signal.signal(signal.SIGTERM, shutdown)
+    # Disable polling by not calling run_polling. Webhook is now handling the updates.
+    # The bot will now listen for updates only through the webhook.
+    # No polling method is invoked here, so it's fully webhook-based.
 
 if __name__ == '__main__':
-    main()
+    import asyncio
+    asyncio.run(main())
