@@ -8,9 +8,9 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Your bot token and webhook URL
-TOKEN = os.getenv("7981527875:AAEMoKR68iYkQzE2Ga9YYU3CZ08orBYy_xI")
-WEBHOOK_URL = os.getenv("https://telegramtestbot-ruqb.onrender.com")
+# Get your bot token and webhook URL from environment variables
+TOKEN = os.getenv("7981527875:AAEMoKR68iYkQzE2Ga9YYU3CZ08orBYy_xI")  # Make sure the environment variable is named "BOT_TOKEN"
+WEBHOOK_URL = os.getenv("https://telegramtestbot-ruqb.onrender.com")  # Ensure you have the correct webhook URL in your environment
 
 # Define a basic command handler (for example, `/start`)
 async def start(update: Update, context: CallbackContext) -> None:
@@ -24,11 +24,20 @@ async def main() -> None:
     application.add_handler(CommandHandler("start", start))
 
     # Set up the webhook
-    await application.bot.set_webhook(WEBHOOK_URL)
+    if not WEBHOOK_URL:
+        logger.error("Webhook URL is missing. Make sure to set the WEBHOOK_URL environment variable.")
+        return
+
+    try:
+        await application.bot.set_webhook(WEBHOOK_URL)
+        logger.info(f"Webhook set to {WEBHOOK_URL}")
+    except Exception as e:
+        logger.error(f"Failed to set webhook: {e}")
+        return
 
     # Disable polling by not calling run_polling. Webhook is now handling the updates.
     # The bot will now listen for updates only through the webhook.
-    # No polling method is invoked here, so it's fully webhook-based.
+    logger.info("Bot is now listening for updates through the webhook.")
 
 if __name__ == '__main__':
     import asyncio
