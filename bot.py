@@ -1,6 +1,6 @@
 import asyncio
 from telegram import Bot
-from telegram.ext import Updater, MessageHandler, Filters
+from telegram.ext import Application, MessageHandler, filters
 from telegram.error import InvalidToken
 import logging
 
@@ -21,7 +21,7 @@ async def send_message(bot, chat_id, text):
         print(f"An error occurred: {e}")
 
 # Function to handle incoming messages and respond to the user
-def handle_message(update, context):
+async def handle_message(update, context):
     user_message = update.message.text
     bot = context.bot
     chat_id = update.message.chat_id
@@ -31,23 +31,19 @@ def handle_message(update, context):
     response = f"You said: {user_message}"
     
     # Send a reply using the async send_message function
-    asyncio.run(send_message(bot, chat_id, response))
+    await send_message(bot, chat_id, response)
 
 def main():
-    # Create an Updater object to receive and handle updates
-    updater = Updater(token=token, use_context=True)
-
-    # Get the dispatcher to register the handler
-    dispatcher = updater.dispatcher
+    # Create an Application object to receive and handle updates
+    application = Application.builder().token(token).build()
 
     # Register a message handler that listens for text messages
-    message_handler = MessageHandler(Filters.text & ~Filters.command, handle_message)
-    dispatcher.add_handler(message_handler)
+    message_handler = MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message)
+    application.add_handler(message_handler)
 
     # Start the bot
     print("Bot is now running. It will reply to any incoming messages...")
-    updater.start_polling()
-    updater.idle()
+    application.run_polling()
 
 if __name__ == "__main__":
     main()
