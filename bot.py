@@ -8,7 +8,7 @@ chat_id = '@gopitestbot12'  # Ensure this is the correct chat ID or username
 async def send_message():
     try:
         bot = Bot(token=token)
-        await bot.send_message(chat_id=chat_id, text='Message sent from Postman')
+        await bot.send_message(chat_id=chat_id, text='Message sent from Live server')
         print("Message sent successfully!")
     except InvalidToken:
         print("Invalid token! Please check your token.")
